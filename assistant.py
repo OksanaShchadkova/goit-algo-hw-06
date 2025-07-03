@@ -1,4 +1,3 @@
-# Implementing classes
 from collections import UserDict
 import re
 
@@ -69,7 +68,6 @@ class AddressBook(UserDict):
 
     def __str__(self):
         return "\n".join(str(record) for record in self.data.values())
-#  Integrate with an assistant
 
 
 def input_error(func):
@@ -78,8 +76,8 @@ def input_error(func):
             return func(*args, **kwargs)
         except KeyError:
             return "Contact not found."
-        except ValueError:
-            return "Give me name and phone please."
+        except ValueError as e:
+            return str(e)
         except IndexError:
             return "Enter user name."
     return inner
@@ -94,7 +92,10 @@ def parse_input(user_input: str):
 
 @input_error
 def add_contact(args, address_book):
-    name, phone = args  # ValueError буде автоматично, якщо не 2 аргументи
+    if len(args) != 2:
+        raise ValueError("Please provide both name and phone number.")
+
+    name, phone = args  # Значення аргументів
     record = Record(name)
     record.add_phone(phone)
     address_book.add_record(record)
@@ -103,21 +104,27 @@ def add_contact(args, address_book):
 
 @input_error
 def change_contact(args, address_book):
+    if len(args) != 2:
+        raise ValueError("Please provide both name and phone number.")
+
     name, phone = args
     record = address_book.find(name)
     if record:
         record.add_phone(phone)  # Додаємо новий телефон
         return f"Contact '{name}' updated with new phone number '{phone}'."
-    raise KeyError
+    raise KeyError(name)
 
 
 @input_error
 def show_phone(args, address_book):
+    if len(args) != 1:
+        raise ValueError("Please provide a name.")
+
     name = args[0]
     record = address_book.find(name)
     if record:
         return str(record)
-    raise KeyError
+    raise KeyError(name)
 
 
 @input_error
@@ -161,4 +168,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main()ру
