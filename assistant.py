@@ -35,15 +35,21 @@ class Record:
         self.phones.append(phone)
 
     def remove_phone(self, phone_number):
-        for phone in self.phones:
-            if phone.value == phone_number:
-                self.phones.remove(phone)
-                return
-        raise ValueError("Phone number not found.")
+        phone = self.find_phone(phone_number)
+        if phone:
+            self.phones.remove(phone)
+        else:
+            raise ValueError("Phone number not found.")
 
     def edit_phone(self, old_phone, new_phone):
-        self.remove_phone(old_phone)  # Видаляємо старий номер
-        self.add_phone(new_phone)      # Додаємо новий номер
+        # Перевіряємо, чи новий номер валідний перед видаленням старого
+        if not Phone.validate(new_phone):
+            raise ValueError("New phone number must be a string of 10 digits.")
+
+        # Видаляємо старий номер
+        self.remove_phone(old_phone)
+        # Додаємо новий номер
+        self.add_phone(new_phone)
 
     def find_phone(self, phone_number):
         for phone in self.phones:
@@ -168,4 +174,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()ру
+    main()
